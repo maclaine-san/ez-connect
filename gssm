@@ -6,39 +6,65 @@ COLOR_GREEN="$(tput setaf 2)"
 COLOR_YELLOW="$(tput setaf 3)"
 COLOR_CYAN="$(tput setaf 6)"
 
-printf '%s%s%s\n' $COLOR_CYAN'
 
-**********************************************************
-*                                                        *
-*                                                        * 
-*    ********     ********    ********   ****     ****   *
-*   **//////**   **//////    **//////   /**/**   **/**   *
-*  **      //   /**         /**         /**//** ** /**   *
-*  /**           /*********  /*********  /** //***  /**  *
-*  /**    *****  ////////**  ////////**  /**  //*   /**  *
-*  //**  ////**         /**         /**  /**   /    /**  *
-*   //********    ********    ********   /**        /**  *
-*   ////////    ////////    ////////    //         //    *
-*                                                        * 
-*                   version 0.1.0                        *
-*   https://github.com/maclaine-san/git-ssh-scp-manager  *
-*                                                        *
-**********************************************************
-' $COLOR_REST
+main() {
+  clear
+  printf '%s%s%s\n' $COLOR_CYAN'
+  
+  **********************************************************
+  *                                                        *
+  *                                                        * 
+  *    ********     ********    ********   ****     ****   *
+  *   **//////**   **//////    **//////   /**/**   **/**   *
+  *  **      //   /**         /**         /**//** ** /**   *
+  *  /**           /*********  /*********  /** //***  /**  *
+  *  /**    *****  ////////**  ////////**  /**  //*   /**  *
+  *  //**  ////**         /**         /**  /**   /    /**  *
+  *   //********    ********    ********   /**        /**  *
+  *   ////////    ////////    ////////    //         //    *
+  *                                                        * 
+  *                   version 0.1.0                        *
+  *   https://github.com/maclaine-san/git-ssh-scp-manager  *
+  *                                                        *
+  **********************************************************
+  ' $COLOR_REST
+  
+  d=$'Manage all your ssh connections easily with ez-connect.'
+  printf '%s%s%s\n' $COLOR_GREEN "$d" $COLOR_REST
+  
+  
+  echo -e "\nWhat do you want to do next?"
+  echo "-----------------------------------------------"
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "1. " $COLOR_CYAN "git push/pull" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "2. " $COLOR_CYAN "ssh to server" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "3. " $COLOR_CYAN "scp files" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "4. " $COLOR_CYAN "exit" $COLOR_REST
+  echo "-----------------------------------------------"
+  
+  read -p "Enter choice: " nextStep
+  
+  case "$nextStep" in
+    "1")
+      setupSshKey
+      read -p "Enter git username: " ssh_username
+      git config user.name $ssh_username
+      gitCommands
+      ;;
+    "2")
+      sshCommands
+      ;;
+    "3")
+      echo "SCP support is coming soon!"
+      sleep 2
+      main
+      ;;
+    "4")
+      exit
+      ;;
+  esac
+}
 
-d=$'Manage all your ssh connections easily with ez-connect.'
-printf '%s%s%s\n' $COLOR_GREEN "$d" $COLOR_REST
-
-
-echo -e "\nWhat do you want to do next?"
-echo "-----------------------------------------------"
-printf '%s%s%s%s%s\n' $COLOR_YELLOW "1. " $COLOR_CYAN "git push/pull" $COLOR_REST
-printf '%s%s%s%s%s\n' $COLOR_YELLOW "2. " $COLOR_CYAN "ssh to server" $COLOR_REST
-printf '%s%s%s%s%s\n' $COLOR_YELLOW "3. " $COLOR_CYAN "scp files" $COLOR_REST
-printf '%s%s%s%s%s\n' $COLOR_YELLOW "4. " $COLOR_CYAN "exit" $COLOR_REST
-echo "-----------------------------------------------"
-
-
+# --------------------------- FUNCTIONS ---------------------------
 gitCommands() {
   echo -e "\nGetting current branch info:"
   git branch
@@ -54,66 +80,109 @@ gitCommands() {
 
   case "$gitChoice" in
     "1")
-     read -p "PULL Enter git branch: " pullbranch
+     read -p "[git pull] enter branch: " pullbranch
      git pull origin $pullbranch
      gitCommands
      ;;
     "2")
-     read -p "PUSH Enter git branch: " pushbranch
+     read -p "[git push] enter branch: " pushbranch
      git push origin $pushbranch
      gitCommands
      ;;
     "3")
-     read -p "SUPER PUSH files to add: " files
-     read -p "SUPER PUSH commit message: " message
-     read -p "SUPER PUSH branch: " branch
+     read -p "[s-push] files to add: " files
+     read -p "[s-push] commit message: " message
+     read -p "[s-push] branch: " branch
      git add $files && git commit -m "$message" && git push origin $branch
      gitCommands
      ;;
     "4")
      exit
+     ;;
+  esac
+}
+
+addServer() {
+  clear
+  read -p "Enter server name: " server_name
+  read -p "Enter server address (root@127.0.0.1): " server_address
+
+  FILE=~/.config/gssm/servers
+
+  if [ "$server_name" != "" ] && [ "$server_address" != "" ]; then
+    server_details="$server_name|$server_address"
+    echo ${server_details//[[:blank:]]/} >> $FILE
+    listServers
+  fi
+}
+
+connect() {
+  FILE=~/.config/gssm/servers
+  read -p "Enter the server # you want to connect to: " server_number
+  line=$(sed -n "${server_number}p" < $FILE)
+  details=(${line//|/ })
+  ssh ${details[1]}
+}
+
+listServers() {
+  clear
+  echo -e "\nUsing SSH"
+  echo "-----------------------------------------------"
+  echo " # |   Current Server list"
+  echo "-----------------------------------------------"
+  ITER=1
+  FILE=~/.config/gssm/servers
+  while IFS= read -r line
+  do
+    printf '%s%s%s%s%s\n' $COLOR_CYAN" ${ITER} " $COLOR_CYAN "|  $line" $COLOR_REST
+    let ITER=${ITER}+1
+  done < "$FILE"
+
+  echo -e "\n\n"
+  echo " # |   Choices"
+  echo "-----------------------------------------------"
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW " c " $COLOR_CYAN "|  Connect to server" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW " a " $COLOR_CYAN "|  Add a server" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW " d " $COLOR_CYAN "|  Remove a server from list" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "   " $COLOR_CYAN "|  Ctrl + c to exit" $COLOR_REST
+  echo "-----------------------------------------------"
+  echo -e "\n"
+  read -p "Enter # of choice: " choice
+
+  case "$choice" in
+    "c")
+     connect
+     ;;
+    "a")
+     addServer
+     ;;
+    "d")
+     read -p "Enter server # to remove: " to_remove
+     sed -i '' "${to_remove}d" $FILE
+     listServers
+     ;;
+    *)
+     listServers
      ;;
   esac
 }
 
 sshCommands() {
-  echo -e "\nAvailable Git commands."
-  echo "-----------------------------------------------"
-  printf '%s%s%s%s%s\n' $COLOR_YELLOW "1. " $COLOR_CYAN "git pull <branch> only" $COLOR_REST
-  printf '%s%s%s%s%s\n' $COLOR_YELLOW "2. " $COLOR_CYAN "git push <branch> only" $COLOR_REST
-  printf '%s%s%s%s%s\n' $COLOR_YELLOW "3. " $COLOR_CYAN "super push = git add <files> -> git commit <message> -> git push <branch>" $COLOR_REST
-  printf '%s%s%s%s%s\n' $COLOR_YELLOW "4. " $COLOR_CYAN "exit" $COLOR_REST
-  echo "-----------------------------------------------"
-
-  read -p "Enter git command choice: " gitChoice
-
-  case "$gitChoice" in
-    "1")
-     read -p "PULL Enter git branch: " pullbranch
-     git pull origin $pullbranch
-     gitCommands
-     ;;
-    "2")
-     read -p "PUSH Enter git branch: " pushbranch
-     git push origin $pushbranch
-     gitCommands
-     ;;
-    "3")
-     read -p "SUPER PUSH files to add: " files
-     read -p "SUPER PUSH commit message: " message
-     read -p "SUPER PUSH branch: " branch
-     git add $files && git commit -m "$message" && git push origin $branch
-     gitCommands
-     ;;
-    "4")
-     exit
-     ;;
-  esac
+  clear
+  FILE=~/.config/gssm
+  if [[ -d "$FILE" ]]; then
+    listServers
+  else
+    # mkdir "~/.config/gssm/"
+    mkdir ~/.config/gssm
+    touch ~/.config/gssm/servers
+  fi
 }
 
 setupSshKey() {
- # Search ssh directory for pub files
- # This will serve as our list for ssh connections
+  clear
+  # Search ssh directory for pub files
+  # This will serve as our list for ssh connections
   echo -e "\nYour available ssh keys in ~/.ssh directory.\n"
   echo "-----------------------------------------------"
   echo "id |    ssh key file"
@@ -134,27 +203,11 @@ setupSshKey() {
   ssh-add ${ssh_keys[ssh_key_id]}
 }
 
-read -p "Enter choice: " nextStep
 
-case "$nextStep" in
-  "1")
-    setupSshKey
-    read -p "Enter git username: " ssh_username
-    git config user.name $ssh_username
-    gitCommands
-    ;;
-  "2")
-    sshCommands
-    ;;
-  # "3")
-  #   echo "scp commands"
-  #   ;;
-  "3")
-    exit
-    ;;
-esac
+# -------------------- END -------------------------------
 
 
 
+main "$@"; exit
 
 
