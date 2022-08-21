@@ -81,11 +81,13 @@ gitCommands() {
   case "$gitChoice" in
     "1")
      read -p "[git pull] enter branch: " pullbranch
+     clear
      git pull origin $pullbranch
      gitCommands
      ;;
     "2")
      read -p "[git push] enter branch: " pushbranch
+     clear
      git push origin $pushbranch
      gitCommands
      ;;
@@ -93,6 +95,7 @@ gitCommands() {
      read -p "[s-push] git add: " files
      read -p "[s-push] git commit: " message
      read -p "[s-push] branch: " branch
+     clear
      git add $files && git commit -m "$message" && git push origin $branch
      gitCommands
      ;;
