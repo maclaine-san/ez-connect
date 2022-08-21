@@ -43,8 +43,10 @@ done
 
 echo "-----------------------------------------------"
 
-read -p "Enter ssh key id: " ssh_key_id
+read -p "Enter git username: " ssh_username
+git config user.name $ssh_username
 
+read -p "Enter ssh key id: " ssh_key_id
 ssh-add ${ssh_keys[ssh_key_id]}
 
 echo -e "\nWhat do you want to do next?"
@@ -57,6 +59,8 @@ echo "-----------------------------------------------"
 
 
 gitCommands() {
+  echo -e "\nGetting current branch info:"
+  git branch
   echo -e "\nAvailable Git commands."
   echo "-----------------------------------------------"
   printf '%s%s%s%s%s\n' $COLOR_YELLOW "1. " $COLOR_CYAN "git pull <branch> only" $COLOR_REST
@@ -66,15 +70,16 @@ gitCommands() {
   echo "-----------------------------------------------"
 
   read -p "Enter git command choice: " gitChoice
+
   case "$gitChoice" in
     "1")
-     read -p "PULL Enter git branch: " gitbranch
-     git pull origin gitbranch
+     read -p "PULL Enter git branch: " pullbranch
+     git pull origin $pullbranch
      gitCommands
      ;;
     "2")
-     read -p "PUSH Enter git branch: " gitbranch
-     git push origin gitbranch
+     read -p "PUSH Enter git branch: " pushbranch
+     git push origin $pushbranch
      gitCommands
      ;;
     "3")

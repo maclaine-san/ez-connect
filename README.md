@@ -26,13 +26,13 @@ Ez-connect has 0 dependencies. Ez-connect will work with any unix type terminals
 
 ```
 $ git clone https://github.com/maclaine-san/ez-connect.git
-$ sudo cp ez-connect/ez-connect /usr/local/bin/
+$ sudo cp ez-connect/ez-connect /usr/local/bin/ec
 ```
 
 # Usage
 
 ```bash
-$ ez-connect
+$ ec
 **********************************************************
 *                                                  __    *
 *      ___  ___   ____ ___   ___   ___  ___  ____ / /_   *
