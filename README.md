@@ -24,7 +24,7 @@ This will work with any unix type terminals that has a running ssh-agent. Just s
 # Installation
 
 ```
-$ git clone https://github.com/maclaine-san/ez-connect.git
+$ git clone https://github.com/maclaine-san/git-ssh-scp-manager.git
 $ sudo cp git-ssh-scp-manager/gssm /usr/local/bin/
 ```
 
