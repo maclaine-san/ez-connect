@@ -42,10 +42,6 @@ do
 done
 
 echo "-----------------------------------------------"
-
-read -p "Enter git username: " ssh_username
-git config user.name $ssh_username
-
 read -p "Enter ssh key id: " ssh_key_id
 ssh-add ${ssh_keys[ssh_key_id]}
 
@@ -99,6 +95,8 @@ read -p "Enter choice: " nextStep
 
 case "$nextStep" in
   "1")
+    read -p "Enter git username: " ssh_username
+    git config user.name $ssh_username
     gitCommands
     ;;
   "2")
