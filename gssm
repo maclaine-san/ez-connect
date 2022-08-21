@@ -90,8 +90,8 @@ gitCommands() {
      gitCommands
      ;;
     "3")
-     read -p "[s-push] files to add: " files
-     read -p "[s-push] commit message: " message
+     read -p "[s-push] git add: " files
+     read -p "[s-push] git commit: " message
      read -p "[s-push] branch: " branch
      git add $files && git commit -m "$message" && git push origin $branch
      gitCommands
@@ -105,7 +105,7 @@ gitCommands() {
 addServer() {
   clear
   read -p "Enter server name: " server_name
-  read -p "Enter server address (root@127.0.0.1): " server_address
+  read -p "Enter server address ex. root@127.0.0.1: " server_address
 
   FILE=~/.config/gssm/servers
 
