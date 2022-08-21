@@ -1,12 +1,12 @@
-# EZ CONNECT
-Manage your ssh keys and connections easily with ez-conenct.
+# GIT-SSH-SCP-MANAGER (gssm)
+Manage your ssh keys and connections easily with GSSM.
 
 # Supported shells
 
 ```
-0. Mac default Terminal 
-1. iTerm
-2. Tmux
+1. Mac default terminal 
+2. iTerm
+3. Tmux
 ```
 
 # Check if your terminal shell is supported
@@ -17,44 +17,67 @@ eval $(ssh-agent -s)
 
 # Install Dependencies
 
-```
-Ez-connect has 0 dependencies. Ez-connect will work with any unix type terminals that has a running ssh-agent. Just simply follow the installation guide below and let the magic happen.
-```
+This package requires 0 dependencies.
+This will work with any unix type terminals that has a running ssh-agent. Just simply follow the installation guide below and let the magic happen.
 
 
-# Install Ez-connect
+# Installation
 
 ```
 $ git clone https://github.com/maclaine-san/ez-connect.git
-$ sudo cp ez-connect/ez-connect /usr/local/bin/ec
+$ sudo cp git-ssh-scp-manager/gssm /usr/local/bin/
 ```
 
 # Usage
-
+Note: If you want to use git command option, you should be in the directory of the project that you want to manage.
 ```bash
-$ ec
+$ gssm
 **********************************************************
 *                                                  __    *
 *      ___  ___   ____ ___   ___   ___  ___  ____ / /_   *
 *     / -_)/_ /  / __// _ \ / _ \ / _ \/ -_)/ __// __/   *
 *     \__/ /__/  \__/ \___//_//_//_//_/\__/ \__/ \__/    *
 *                                                        *
-*                   version 0.1.0                        *
-*        https://github.com/maclaine-san/ez-connect      *
+*                 version 0.1.0                          *
+*        https://github.com/maklen-san/ez-connect        *
 *                                                        *
 **********************************************************
 
 Manage all your ssh connections easily with ez-connect.
 
+What do you want to do next?
+-----------------------------------------------
+1. git command
+2. ssh to server
+3. scp files
+4. exit
+-----------------------------------------------
+Enter choice: 1
+
 Your available ssh keys in ~/.ssh directory.
+
 -----------------------------------------------
 id |    ssh key file
 -----------------------------------------------
-0. /Users/maclaine-san/.ssh/id_rsa
-1. /Users/maclaine-san/.ssh/id_rsa_singapore
-2. /Users/maclaine-san/.ssh/id_rsa_australia
-3. /Users/maclaine-san/.ssh/id_rsa_philippines
+0. /Users/mac/.ssh/id_rsa
+1. /Users/mac/.ssh/id_rsa_gitlab
+2. /Users/mac/.ssh/id_rsa_github
+3. /Users/mac/.ssh/id_rsa_bitbucket
 -----------------------------------------------
-Enter ssh key id.
+Enter ssh key id: 1
+Identity added: /Users/mac/.ssh/id_rsa (mac@macbook.lan)
+Enter git username: maclaine-san
+
+Getting current branch info:
+* main
+
+Available Git commands.
+-----------------------------------------------
+1. git pull <branch> only
+2. git push <branch> only
+3. super push = git add <files> -> git commit <message> -> git push <branch>
+4. exit
+-----------------------------------------------
+Enter git command choice: 1
 ```
 
