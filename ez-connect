@@ -1,0 +1,113 @@
+#!/bin/bash
+
+COLOR_REST="$(tput sgr0)"
+COLOR_RED="$(tput setaf 1)"
+COLOR_GREEN="$(tput setaf 2)"
+COLOR_YELLOW="$(tput setaf 3)"
+COLOR_CYAN="$(tput setaf 6)"
+
+printf '%s%s%s\n' $COLOR_CYAN'
+
+**********************************************************
+*                                                  __    *
+*      ___  ___   ____ ___   ___   ___  ___  ____ / /_   *
+*     / -_)/_ /  / __// _ \ / _ \ / _ \/ -_)/ __// __/   *
+*     \__/ /__/  \__/ \___//_//_//_//_/\__/ \__/ \__/    *
+*                                                        *
+*                 version 0.1.0                          *
+*        https://github.com/maklen-san/ez-connect        *
+*                                                        *
+**********************************************************
+' $COLOR_REST
+
+d=$'Manage all your ssh connections easily with ez-connect.'
+printf '%s%s%s\n' $COLOR_GREEN "$d" $COLOR_REST
+
+
+ # Search ssh directory for pub files
+ # This will serve as our list for ssh connections
+echo -e "\nYour available ssh keys in ~/.ssh directory.\n"
+echo "-----------------------------------------------"
+echo "id |    ssh key file"
+echo "-----------------------------------------------"
+
+ITER=0
+ssh_keys=()
+search_ssh_dir=`ls ~/.ssh/*.pub`
+for entry in $search_ssh_dir
+do
+    printf '%s%s%s%s%s\n' $COLOR_YELLOW "${ITER}. " $COLOR_CYAN "${entry//.pub}" $COLOR_REST
+    ssh_keys+=(${entry//.pub})
+    let ITER=${ITER}+1
+done
+
+echo "-----------------------------------------------"
+
+read -p "Enter ssh key id: " ssh_key_id
+
+ssh-add ${ssh_keys[ssh_key_id]}
+
+echo -e "\nWhat do you want to do next?"
+echo "-----------------------------------------------"
+printf '%s%s%s%s%s\n' $COLOR_YELLOW "1. " $COLOR_CYAN "Git command" $COLOR_REST
+printf '%s%s%s%s%s\n' $COLOR_YELLOW "2. " $COLOR_CYAN "ssh to a server" $COLOR_REST
+printf '%s%s%s%s%s\n' $COLOR_YELLOW "3. " $COLOR_CYAN "scp files a server" $COLOR_REST
+printf '%s%s%s%s%s\n' $COLOR_YELLOW "4. " $COLOR_CYAN "exit" $COLOR_REST
+echo "-----------------------------------------------"
+
+
+gitCommands() {
+  echo -e "\nAvailable Git commands."
+  echo "-----------------------------------------------"
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "1. " $COLOR_CYAN "git pull <branch> only" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "2. " $COLOR_CYAN "git push <branch> only" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "3. " $COLOR_CYAN "super push = git add <files> -> git commit <message> -> git push <branch>" $COLOR_REST
+  printf '%s%s%s%s%s\n' $COLOR_YELLOW "4. " $COLOR_CYAN "exit" $COLOR_REST
+  echo "-----------------------------------------------"
+
+  read -p "Enter git command choice: " gitChoice
+  case "$gitChoice" in
+    "1")
+     read -p "PULL Enter git branch: " gitbranch
+     git pull origin gitbranch
+     gitCommands
+     ;;
+    "2")
+     read -p "PUSH Enter git branch: " gitbranch
+     git push origin gitbranch
+     gitCommands
+     ;;
+    "3")
+     read -p "SUPER PUSH files to add: " files
+     read -p "SUPER PUSH commit message: " message
+     read -p "SUPER PUSH branch: " branch
+     git add $files && git commit -m "$message" && git push origin $branch
+     gitCommands
+     ;;
+    "4")
+     exit
+     ;;
+  esac
+}
+
+read -p "Enter choice: " nextStep
+
+case "$nextStep" in
+  "1")
+    gitCommands
+    ;;
+  "2")
+    echo "ssh commands"
+    ;;
+  "3")
+    echo "scp commands"
+    ;;
+  "4")
+    exit
+    ;;
+esac
+
+
+
+
+
