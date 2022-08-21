@@ -54,7 +54,7 @@ main() {
       sshCommands
       ;;
     "3")
-      echo "SCP support is coming soon!"
+      echo "scp support is coming soon!"
       sleep 2
       main
       ;;
@@ -176,6 +176,7 @@ sshCommands() {
     # mkdir "~/.config/gssm/"
     mkdir ~/.config/gssm
     touch ~/.config/gssm/servers
+    listServers
   fi
 }
 
@@ -199,7 +200,7 @@ setupSshKey() {
   done
   
   echo "-----------------------------------------------"
-  read -p "Enter ssh key id: " ssh_key_id
+  read -p "Enter ssh key id to use: " ssh_key_id
   ssh-add ${ssh_keys[ssh_key_id]}
 }
 
